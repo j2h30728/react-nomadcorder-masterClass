@@ -1,6 +1,14 @@
 import { users } from "../db";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 const Home = () => {
+  const [readSearchParams, setSearchParams] = useSearchParams();
+  console.log(readSearchParams.get("geo"));
+  setTimeout(() => {
+    setSearchParams({
+      day: "today",
+      tommorrow: "123",
+    });
+  }, 3000); // 3초 뒤에 url이
   return (
     <ul>
       {users.map(user => (
