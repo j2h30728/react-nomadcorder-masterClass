@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 interface RouterState {
@@ -8,7 +8,26 @@ interface RouterState {
 }
 export default function Coin() {
   const [loading, setLoading] = useState(true);
+  const { coinId } = useParams();
   const { state } = useLocation() as RouterState;
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+
+  useEffect(() => {
+    //즉시실행 함수. 추후에 react - qeury 로 변경 예정
+    (async () => {
+      //1. 코인에 대한 정보 2. 코인의 가격 정보
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+    })();
+  }, []);
+
   return (
     <Container>
       <Header>
