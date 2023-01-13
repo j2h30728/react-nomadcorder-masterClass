@@ -23,11 +23,10 @@ export default function Coins() {
       setLoading(false);
     })();
   }, []);
-  console.log(coins);
   return (
     <Container>
       <Header>
-        <Title>Coins</Title>
+        <Title>코인</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
