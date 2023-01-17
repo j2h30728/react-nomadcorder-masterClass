@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { useLocation, useParams, Outlet } from "react-router-dom";
+import {
+  useLocation,
+  useParams,
+  Outlet,
+  Link,
+  useMatch,
+} from "react-router-dom";
 import styled from "styled-components";
 interface RouterState {
   state: {
@@ -65,6 +71,8 @@ export default function Coin() {
   const { state } = useLocation() as RouterState;
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
 
   useEffect(() => {
     //즉시실행 함수. 추후에 react - qeury 로 변경 예정
@@ -79,8 +87,6 @@ export default function Coin() {
       setInfo(infoData);
       setPriceInfo(priceData);
       setLoading(false);
-      console.log("111111", infoData);
-      console.log("222222", priceData);
     })();
   }, [coinId]);
 
@@ -120,6 +126,14 @@ export default function Coin() {
               <span>{priceInfo?.max_supply}</span>
             </OverviewItem>
           </Overview>
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to="chart">Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to="price">Price</Link>
+            </Tab>
+          </Tabs>
         </>
       )}
       <Outlet />
@@ -170,4 +184,24 @@ const OverviewItem = styled.div`
 `;
 const Description = styled.div`
   margin: 20px 0px;
+`;
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+const Tab = styled.span<{ isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 400px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 7px 0px;
+  border-radius: 10px;
+  color: ${props =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block; //버튼 어느 곳을 눌러도 클릭됨
+  }
 `;
