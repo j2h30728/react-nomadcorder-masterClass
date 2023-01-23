@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   useLocation,
   useParams,
@@ -7,6 +6,8 @@ import {
   useMatch,
 } from "react-router-dom";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCoinInfo, fetchCoinTrikers } from "../api";
 interface RouterState {
   state: {
     name: string;
@@ -32,7 +33,7 @@ interface InfoData {
   first_data_at: string;
   last_data_at: string;
 }
-interface PriceData {
+interface TrikersData {
   id: string;
   name: string;
   symbol: string;
@@ -66,35 +67,26 @@ interface PriceData {
   };
 }
 export default function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams();
   const { state } = useLocation() as RouterState;
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
 
-  useEffect(() => {
-    //즉시실행 함수. 추후에 react - qeury 로 변경 예정
-    (async () => {
-      //1. 코인에 대한 정보 2. 코인의 가격 정보
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
-
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+    //fetchCoinInfo함수를 불러와서 URL로부터 오는 coinId를 넣어주는 것
+  );
+  const { isLoading: trikersoading, data: trikersData } = useQuery<TrikersData>(
+    ["trikers", coinId],
+    () => fetchCoinTrikers(coinId)
+  );
+  const loading = infoLoading || trikersoading;
   return (
     <Container>
       <Header>
         <Title>
-          {state?.name ? state?.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state?.name : loading ? "Loading..." : infoData?.name}
         </Title>
       </Header>
       {loading ? (
@@ -104,26 +96,26 @@ export default function Coin() {
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <span>{info?.symbol}</span>
+              <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply::</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{trikersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{trikersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>

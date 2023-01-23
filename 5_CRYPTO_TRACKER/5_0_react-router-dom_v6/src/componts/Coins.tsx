@@ -18,19 +18,6 @@ export default function Coins() {
     ["allCoins"],
     fetchCoins
   );
-  // const [coins, setCoins] = useState<ICoin[]>([]);
-  // const [loading, setLoading] = useState(true);
-
-  // 데이터가 준비되면, 데이터를 state에 집어넣고 로딩을 false로 함
-  // react query를 사용해 위의 과정을 자동으로 해줌
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await fetch("https://api.coinpaprika.com/v1/coins");
-  //     const json = await response.json();
-  //     setCoins(json.slice(0, 100)); //100개만 잘라냄
-  //     setLoading(false);
-  //   })();
-  // }, []);
   return (
     <Container>
       <Header>
