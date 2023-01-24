@@ -8,6 +8,7 @@ import {
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoinInfo, fetchCoinTrikers } from "../api";
+import Helmet from "react-helmet";
 interface RouterState {
   state: {
     name: string;
@@ -74,8 +75,11 @@ export default function Coin() {
 
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
     ["info", coinId],
-    () => fetchCoinInfo(coinId)
+    () => fetchCoinInfo(coinId),
     //fetchCoinInfo함수를 불러와서 URL로부터 오는 coinId를 넣어주는 것
+    {
+      refetchInterval: 5000, //5000ms(5초) : 해당하는 이 query를 5초마다 refresh함
+    }
   );
   const { isLoading: trikersoading, data: trikersData } = useQuery<TrikersData>(
     ["trikers", coinId],
@@ -86,6 +90,11 @@ export default function Coin() {
   const loading = infoLoading || trikersoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state?.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state?.name : loading ? "Loading..." : infoData?.name}
@@ -105,8 +114,8 @@ export default function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>price</span>
+              <span>${trikersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>

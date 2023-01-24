@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCoinHistory } from "../api";
 import { useOutletContext } from "react-router-dom";
 import ApexChart from "react-apexcharts";
-import { privateEncrypt } from "crypto";
 
 interface ChartProps {
   coinId: string;
@@ -20,8 +19,12 @@ interface IHistorical {
 }
 export default function Chart() {
   const { coinId } = useOutletContext<ChartProps>();
-  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-    fetchCoinHistory(coinId)
+  const { isLoading, data } = useQuery<IHistorical[]>(
+    ["ohlcv", coinId],
+    () => fetchCoinHistory(coinId),
+    {
+      refetchInterval: 10000, //10초마다 refetching
+    }
   );
   return (
     <div>
