@@ -45,13 +45,10 @@ export default function Chart() {
               toolbar: {
                 show: false,
               },
+              background: "trnasparse",
             },
             stroke: {
               curve: "smooth",
-            },
-            title: {
-              text: coinId,
-              align: "center",
             },
             grid: {
               show: false,
