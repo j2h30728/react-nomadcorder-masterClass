@@ -12,3 +12,11 @@ export async function fetchCoinInfo(coinId: string | undefined) {
 export async function fetchCoinTrikers(coinId: string | undefined) {
   return (await fetch(`${BASE_URL}/tickers/${coinId}`)).json();
 }
+
+export async function fetchCoinHistory(coinId: string) {
+  // const endDate = Math.floor(Date.now() / 1000);
+  // const startDate = endDate - 60 * 60 * 24 * 7; //60초*60분*24시간*7일 : 일주일전
+  return (
+    await fetch(`https://ohlcv-api.nomadcoders.workers.dev/?coinId=${coinId}`)
+  ).json();
+}

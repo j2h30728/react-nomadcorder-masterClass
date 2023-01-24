@@ -81,6 +81,8 @@ export default function Coin() {
     ["trikers", coinId],
     () => fetchCoinTrikers(coinId)
   );
+
+  // 통합된 loading 만듬. 둘중에 하나라도 성공하면 완료. 둘다 성공하지 못하면 계속 loading 컴포넌트 렌더
   const loading = infoLoading || trikersoading;
   return (
     <Container>
@@ -128,7 +130,7 @@ export default function Coin() {
           </Tabs>
         </>
       )}
-      <Outlet />
+      <Outlet context={{ coinId: coinId }} />
     </Container>
   );
 }
