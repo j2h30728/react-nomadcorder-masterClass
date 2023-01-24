@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCoinHistory } from "../api";
 import { useOutletContext } from "react-router-dom";
 import ApexChart from "react-apexcharts";
+import { privateEncrypt } from "crypto";
 
 interface ChartProps {
   coinId: string;
@@ -54,13 +55,32 @@ export default function Chart() {
               show: false,
             },
             xaxis: {
+              axisBorder: { show: false },
+              axisTicks: { show: false },
               labels: {
                 show: false,
               },
+              type: "datetime",
+              categories: data?.map(price =>
+                new Date(price.time_close * 1000).toISOString()
+              ),
             },
             yaxis: {
               labels: {
                 show: false,
+              },
+            },
+            fill: {
+              type: "gradient",
+              gradient: {
+                gradientToColors: ["navy"],
+                stops: [0, 100],
+              },
+            },
+            colors: ["yellow"],
+            tooltip: {
+              y: {
+                formatter: value => `$${value.toFixed(1)}`,
               },
             },
           }}
