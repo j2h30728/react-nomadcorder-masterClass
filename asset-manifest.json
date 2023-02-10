@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/react-nomadcorder-masterClass/static/js/main.037b528b.js",
+    "main.js": "/react-nomadcorder-masterClass/static/js/main.b8bcd29a.js",
     "index.html": "/react-nomadcorder-masterClass/index.html",
-    "main.037b528b.js.map": "/react-nomadcorder-masterClass/static/js/main.037b528b.js.map"
+    "main.b8bcd29a.js.map": "/react-nomadcorder-masterClass/static/js/main.b8bcd29a.js.map"
   },
   "entrypoints": [
-    "static/js/main.037b528b.js"
+    "static/js/main.b8bcd29a.js"
   ]
 }
