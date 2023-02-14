@@ -7,7 +7,7 @@ import Chart from "./componts/Chart";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: `${process.env.PUBLIC_URL}/`,
     element: <App />,
     children: [
       {

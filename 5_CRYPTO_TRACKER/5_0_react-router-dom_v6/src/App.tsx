@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { createGlobalStyle } from "styled-components";
 import { Outlet } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "styled-components";
+import { dark, light } from "./theme";
+import Nav from "./componts/Nav";
 
 function App() {
+  const [themeMode, setThemeMode] = useState("dark");
+  const theme = themeMode === "dark" ? dark : light;
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
+      <Nav darkMode={{ themeMode, setThemeMode }} />
       <Outlet />
       <ReactQueryDevtools initialIsOpen={true} />
-    </>
+    </ThemeProvider>
   );
 }
 

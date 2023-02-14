@@ -17,78 +17,142 @@ interface IHistorical {
   volume: string;
   market_cap: number;
 }
+
 export default function Chart() {
   const { coinId } = useOutletContext<ChartProps>();
-  const { isLoading, data } = useQuery<IHistorical[]>(
+  const lineChart = useQuery<IHistorical[]>(
     ["ohlcv", coinId],
     () => fetchCoinHistory(coinId),
     {
       refetchInterval: 10000, //10초마다 refetching
     }
   );
+  const candleStick = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
+    fetchCoinHistory(coinId)
+  );
   return (
     <div>
-      {isLoading ? (
-        "Loading chart..."
-      ) : (
-        <ApexChart
-          type="line"
-          series={[
-            {
-              name: "Price",
-              data: data?.map(price => parseFloat(price.close)) as number[],
-            },
-          ]}
-          options={{
-            theme: {
-              mode: "dark",
-            },
-            chart: {
-              height: 300,
-              width: 500,
-              toolbar: {
-                show: false,
-              },
-              background: "trnasparse",
-            },
-            stroke: {
-              curve: "smooth",
-            },
-            grid: {
+      <ApexChart
+        type="line"
+        series={[
+          {
+            name: "Price",
+            data: lineChart.data?.map(price =>
+              parseFloat(price.close)
+            ) as number[],
+          },
+        ]}
+        options={{
+          theme: {
+            mode: "dark",
+          },
+          chart: {
+            height: 300,
+            width: 500,
+            toolbar: {
               show: false,
             },
-            xaxis: {
-              axisBorder: { show: false },
-              axisTicks: { show: false },
-              labels: {
-                show: false,
-              },
-              type: "datetime",
-              categories: data?.map(price =>
-                new Date(price.time_close * 1000).toISOString()
-              ),
+            background: "trnasparse",
+          },
+          stroke: {
+            curve: "smooth",
+          },
+          grid: {
+            show: false,
+          },
+          xaxis: {
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: {
+              show: false,
             },
-            yaxis: {
-              labels: {
-                show: false,
+            type: "datetime",
+            categories: lineChart.data?.map(price =>
+              new Date(price.time_close * 1000).toISOString()
+            ),
+          },
+          yaxis: {
+            labels: {
+              show: false,
+            },
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              gradientToColors: ["navy"],
+              stops: [0, 100],
+            },
+          },
+          colors: ["yellow"],
+          tooltip: {
+            y: {
+              formatter: value => `$${value.toFixed(1)}`,
+            },
+          },
+        }}
+      />
+      <ApexChart
+        type="candlestick"
+        series={[
+          {
+            data: candleStick.data?.map(price => [
+              price.time_close * 1000,
+              parseFloat(price.open),
+              parseFloat(price.high),
+              parseFloat(price.low),
+              parseFloat(price.close),
+            ]) as number[][],
+          },
+        ]}
+        options={{
+          theme: {
+            mode: "dark",
+          },
+          chart: {
+            height: 300,
+            width: 500,
+            toolbar: {
+              show: false,
+            },
+            background: "trnasparse",
+          },
+          stroke: {
+            curve: "smooth",
+          },
+          plotOptions: {
+            candlestick: {
+              colors: {
+                upward: "#00cec9",
+                downward: "#e17055",
               },
             },
-            fill: {
-              type: "gradient",
-              gradient: {
-                gradientToColors: ["navy"],
-                stops: [0, 100],
-              },
+          },
+          grid: {
+            show: false,
+          },
+          xaxis: {
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: {
+              show: false,
             },
-            colors: ["yellow"],
-            tooltip: {
-              y: {
-                formatter: value => `$${value.toFixed(1)}`,
-              },
+            type: "datetime",
+            categories: candleStick.data?.map(price =>
+              new Date(price.time_close * 1000).toISOString()
+            ),
+          },
+          yaxis: {
+            labels: {
+              show: false,
             },
-          }}
-        />
-      )}
+          },
+          tooltip: {
+            y: {
+              formatter: value => `$${value}`,
+            },
+          },
+        }}
+      />
     </div>
   );
 }

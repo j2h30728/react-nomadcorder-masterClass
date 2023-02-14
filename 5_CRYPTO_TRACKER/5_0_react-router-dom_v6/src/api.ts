@@ -20,3 +20,8 @@ export async function fetchCoinHistory(coinId: string) {
     await fetch(`https://ohlcv-api.nomadcoders.workers.dev/?coinId=${coinId}`)
   ).json();
 }
+export async function fetchCoinPrice(coinId: string) {
+  return (
+    await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+  ).json();
+}

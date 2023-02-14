@@ -4,11 +4,14 @@ import {
   Outlet,
   Link,
   useMatch,
+  useNavigate,
 } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoinInfo, fetchCoinTrikers } from "../api";
-import Helmet from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { TiArrowLeftOutline } from "react-icons/ti";
+
 interface RouterState {
   state: {
     name: string;
@@ -34,7 +37,7 @@ interface InfoData {
   first_data_at: string;
   last_data_at: string;
 }
-interface TrikersData {
+interface TickersData {
   id: string;
   name: string;
   symbol: string;
@@ -70,9 +73,10 @@ interface TrikersData {
 export default function Coin() {
   const { coinId } = useParams();
   const { state } = useLocation() as RouterState;
-  const priceMatch = useMatch("/:coinId/price");
-  const chartMatch = useMatch("/:coinId/chart");
-
+  const priceMatch = useMatch(`${process.env.PUBLIC_URL}/:coinId/price`);
+  const chartMatch = useMatch(`${process.env.PUBLIC_URL}/:coinId/chart`);
+  const navigate = useNavigate();
+  const handleBack = () => navigate(`${process.env.PUBLIC_URL}/`);
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
     ["info", coinId],
     () => fetchCoinInfo(coinId),
@@ -81,7 +85,7 @@ export default function Coin() {
       refetchInterval: 5000, //5000ms(5초) : 해당하는 이 query를 5초마다 refresh함
     }
   );
-  const { isLoading: trikersoading, data: trikersData } = useQuery<TrikersData>(
+  const { isLoading: trikersoading, data: tickersData } = useQuery<TickersData>(
     ["trikers", coinId],
     () => fetchCoinTrikers(coinId)
   );
@@ -90,12 +94,21 @@ export default function Coin() {
   const loading = infoLoading || trikersoading;
   return (
     <Container>
-      <Helmet>
-        <title>
-          {state?.name ? state?.name : loading ? "Loading..." : infoData?.name}
-        </title>
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>
+            {state?.name
+              ? state?.name
+              : loading
+              ? "Loading..."
+              : infoData?.name}
+          </title>
+        </Helmet>
+      </HelmetProvider>
       <Header>
+        <BackButton onClick={handleBack}>
+          <TiArrowLeftOutline size={30} />
+        </BackButton>
         <Title>
           {state?.name ? state?.name : loading ? "Loading..." : infoData?.name}
         </Title>
@@ -115,18 +128,18 @@ export default function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>price</span>
-              <span>${trikersData?.quotes.USD.price.toFixed(3)}</span>
+              <span>${tickersData?.quotes?.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
-              <span>Total Suply::</span>
-              <span>{trikersData?.total_supply}</span>
+              <span>Total Suply:</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{trikersData?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>
@@ -155,10 +168,16 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
-
+const BackButton = styled.div`
+  position: absolute;
+  left: 10px;
+  top: 40px;
+  background-color: ${props => props.theme.bgColor};
+`;
 const Title = styled.h1`
-  font-size: 48px;
+  font-size: 40px;
   color: ${props => props.theme.accentColor};
 `;
 const Loader = styled.span`
@@ -169,7 +188,7 @@ const Loader = styled.span`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.theme.bgOverviewColor};
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -199,7 +218,8 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 15px;
   font-weight: 400px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props =>
+    props.isActive ? "none" : props.theme.bgOverviewColor};
   padding: 7px 0px;
   border-radius: 10px;
   color: ${props =>
@@ -207,4 +227,6 @@ const Tab = styled.span<{ isActive: boolean }>`
   a {
     display: block; //버튼 어느 곳을 눌러도 클릭됨
   }
+  border: ${props =>
+    props.isActive ? `3px solid ` + props.theme.bgOverviewColor : "none"};
 `;

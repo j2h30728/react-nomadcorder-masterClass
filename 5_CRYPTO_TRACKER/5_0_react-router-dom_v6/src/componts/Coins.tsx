@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 interface ICoin {
   id: string;
   name: string;
@@ -21,9 +21,11 @@ export default function Coins() {
   );
   return (
     <Container>
-      <Helmet>
-        <title>코인</title>
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>Coins</title>
+        </Helmet>
+      </HelmetProvider>
       <Header>
         <Title>코인</Title>
       </Header>
@@ -33,7 +35,7 @@ export default function Coins() {
         <CoinList>
           {coins?.slice(0, 100).map(coin => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`} state={{ name: coin.name }}>
+              <Link to={coin.id} state={{ name: coin.name }}>
                 <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}
 `}
@@ -68,7 +70,7 @@ const Title = styled.h1`
 const CoinList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: ${props => props.theme.darkBgColor};
+  background-color: ${props => props.theme.bgOverviewColor};
   color: ${props => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
