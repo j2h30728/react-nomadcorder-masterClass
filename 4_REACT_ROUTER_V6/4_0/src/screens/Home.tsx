@@ -8,7 +8,7 @@ const Home = () => {
       day: "today",
       tommorrow: "123",
     });
-  }, 3000); // 3초 뒤에 url이
+  }, 3000); // 3초 뒤에 url이 http://localhost:3000/?day=today&tommorrow=123 로 변경됨
   return (
     <ul>
       {users.map(user => (
