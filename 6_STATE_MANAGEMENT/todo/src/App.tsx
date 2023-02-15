@@ -1,6 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-import TodoList from "./TodoList";
-import ReactHookForm from "./ReactHookForm";
+import TodoList from "./components/TodoList";
 
 function App() {
   return (
