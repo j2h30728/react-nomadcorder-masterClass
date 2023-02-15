@@ -4,16 +4,16 @@ import { Outlet } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
 import { dark, light } from "./theme";
-import Nav from "./componts/Nav";
+import Header from "./componts/Header";
 
 function App() {
-  const [themeMode, setThemeMode] = useState("dark");
-  const theme = themeMode === "dark" ? dark : light;
+  const [isDark, setIsDark] = useState(false);
+  const toggleDark = () => setIsDark(current => !current);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={isDark ? dark : light}>
       <GlobalStyle />
-      <Nav darkMode={{ themeMode, setThemeMode }} />
+      <Header toggleDark={toggleDark} isDark={isDark} />
       <Outlet />
       <ReactQueryDevtools initialIsOpen={true} />
     </ThemeProvider>

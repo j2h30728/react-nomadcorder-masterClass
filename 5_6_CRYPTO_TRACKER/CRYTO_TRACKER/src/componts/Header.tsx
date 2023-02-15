@@ -1,21 +1,15 @@
 import styled from "styled-components";
 import { TiWeatherSunny, TiWeatherNight } from "react-icons/ti";
-
-export default function Nav({ darkMode }: any) {
-  const { themeMode, setThemeMode } = darkMode;
-  const toggleTheme = () => {
-    setThemeMode(themeMode === "dark" ? "light" : "dark");
-  };
-
+interface IHeaderProps {
+  isDark: boolean;
+  toggleDark: () => void;
+}
+export default function Header({ toggleDark, isDark }: IHeaderProps) {
   return (
     <Container>
       <NavWrapper>
-        <ThemeButton onClick={toggleTheme}>
-          {themeMode === "dark" ? (
-            <TiWeatherNight size={35} />
-          ) : (
-            <TiWeatherSunny size={35} />
-          )}
+        <ThemeButton onClick={toggleDark}>
+          {isDark ? <TiWeatherNight size={35} /> : <TiWeatherSunny size={35} />}
         </ThemeButton>
       </NavWrapper>
     </Container>
