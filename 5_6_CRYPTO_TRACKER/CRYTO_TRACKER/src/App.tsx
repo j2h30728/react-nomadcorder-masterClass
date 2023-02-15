@@ -5,15 +5,18 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "styled-components";
 import { dark, light } from "./theme";
 import Header from "./componts/Header";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
-  const toggleDark = () => setIsDark(current => !current);
+  // const [isDark, setIsDark] = useState(false);
+  // const toggleDark = () => setIsDark(current => !current);
+  const isDark = useRecoilValue(isDarkAtom);
 
   return (
     <ThemeProvider theme={isDark ? dark : light}>
       <GlobalStyle />
-      <Header toggleDark={toggleDark} isDark={isDark} />
+      <Header />
       <Outlet />
       <ReactQueryDevtools initialIsOpen={true} />
     </ThemeProvider>

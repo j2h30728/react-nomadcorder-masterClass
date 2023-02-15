@@ -1,14 +1,17 @@
 import styled from "styled-components";
 import { TiWeatherSunny, TiWeatherNight } from "react-icons/ti";
-interface IHeaderProps {
-  isDark: boolean;
-  toggleDark: () => void;
-}
-export default function Header({ toggleDark, isDark }: IHeaderProps) {
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isDarkAtom } from "../atoms";
+
+export default function Header() {
+  const [isDark, setIsDark] = useRecoilState(isDarkAtom);
+  const toggleDarkmode = () => {
+    setIsDark(!isDark);
+  };
   return (
     <Container>
       <NavWrapper>
-        <ThemeButton onClick={toggleDark}>
+        <ThemeButton onClick={toggleDarkmode}>
           {isDark ? <TiWeatherNight size={35} /> : <TiWeatherSunny size={35} />}
         </ThemeButton>
       </NavWrapper>
