@@ -43,7 +43,6 @@ export default function Price() {
     ["price", coinId],
     () => fetchCoinPrice(coinId)
   );
-  console.log(priceData?.quotes);
   return (
     <div>
       {isLoading ? (
