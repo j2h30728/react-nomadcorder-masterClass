@@ -1,7 +1,17 @@
 import { createGlobalStyle } from "styled-components";
+import TodoList from "./TodoList";
+import ReactHookForm from "./ReactHookForm";
+
 function App() {
-  return <GlobalStyle />;
+  return (
+    <>
+      <GlobalStyle />
+      <TodoList />
+    </>
+  );
 }
+
+export default App;
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -64,5 +74,3 @@ a {
   color: inherit;
 }
 `;
-
-export default App;
