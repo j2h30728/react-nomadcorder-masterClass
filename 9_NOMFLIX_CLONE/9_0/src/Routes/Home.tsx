@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getMovies, IGetMoviesResult } from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
+import { isReadable } from "stream";
+import { url } from "inspector";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -57,6 +60,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   &:last-child {
     transform-origin: center right;
   }
+  cursor: pointer;
 `;
 const Info = styled(motion.div)`
   padding: 10px;
@@ -70,6 +74,45 @@ const Info = styled(motion.div)`
     font-size: 18px;
   }
 `;
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+const ModalMovie = styled(motion.div)<{ scrolly: number }>`
+  position: absolute;
+  width: 55vw;
+  height: 80vh;
+  top: ${props => props.scrolly + 80}px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 15px;
+  background-color: ${props => props.theme.black.lighter};
+  overflow: hidden;
+`;
+const ModalCover = styled.div<{ bgphoto: string }>`
+  width: 100%;
+  height: 400px;
+  background-image: linear-gradient(to top, black, transparent),
+    url(${props => props.bgphoto});
+  background-size: cover;
+  background-position: center center;
+  border: none;
+`;
+const ModalContent = styled.div`
+  color: ${props => props.theme.white.lighter};
+  padding: 20px;
+  position: relative;
+  top: -70px;
+  h3 {
+    font-size: 46px;
+  }
+`;
+
 const boxVariants = {
   normal: {
     scale: 1,
@@ -100,8 +143,11 @@ export default function Home() {
     ["movies", "nowPlaying"],
     getMovies
   );
+  const modalMovieMatch = useMatch(`/movies/:movieId`);
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const { scrollY } = useScroll();
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -112,6 +158,18 @@ export default function Home() {
     }
   };
   const toggleLeaving = () => setLeaving(prev => !prev);
+  const onClickedBox = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
+  const onOnverlayClick = () => {
+    navigate(-1);
+  };
+  const clickedMovie =
+    modalMovieMatch?.params.movieId &&
+    data?.results.find(
+      movie => String(movie.id) === modalMovieMatch.params.movieId
+    );
+
   return (
     <>
       {isLoading ? (
@@ -137,6 +195,10 @@ export default function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map(movie => (
                     <Box
+                      layoutId={String(movie.id)}
+                      onClick={() => {
+                        onClickedBox(movie.id);
+                      }}
                       variants={boxVariants}
                       initial="normal"
                       whileHover="hover"
@@ -151,6 +213,32 @@ export default function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {modalMovieMatch ? (
+              <>
+                <Overlay
+                  onClick={onOnverlayClick}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <ModalMovie
+                  scrolly={scrollY.get()}
+                  layoutId={modalMovieMatch.params.movieId}>
+                  {clickedMovie && (
+                    <>
+                      <ModalCover
+                        bgphoto={makeImagePath(clickedMovie.backdrop_path)}
+                      />
+                      <ModalContent>
+                        <h3>{clickedMovie.title}</h3>
+                        <p>{clickedMovie.overview}</p>
+                      </ModalContent>
+                    </>
+                  )}
+                </ModalMovie>
+              </>
+            ) : null}
+          </AnimatePresence>
         </Wrapper>
       )}
     </>

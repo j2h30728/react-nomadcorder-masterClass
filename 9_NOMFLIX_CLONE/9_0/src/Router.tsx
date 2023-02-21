@@ -23,6 +23,10 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "movies/:movieId",
+        element: <Home />,
+      },
     ],
   },
 ]);
