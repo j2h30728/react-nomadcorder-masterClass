@@ -1,8 +1,12 @@
 import styled from "styled-components";
-import { useMatch, Link } from "react-router-dom";
+import { useMatch, Link, useNavigate } from "react-router-dom";
 import { motion, useScroll, useAnimation } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
+interface IForm {
+  keyword: string;
+}
 const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
@@ -43,7 +47,7 @@ const Item = styled.div`
     color: ${props => props.theme.white.lighter};
   }
 `;
-const Search = styled.span`
+const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -104,7 +108,8 @@ export default function Header() {
   const navAnimation = useAnimation();
   const homeMath = useMatch("/");
   const tvMatch = useMatch("/tv");
-
+  const { register, handleSubmit } = useForm<IForm>();
+  const navigate = useNavigate();
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({ scaleX: 0 });
@@ -122,6 +127,9 @@ export default function Header() {
       }
     });
   }, [scrollY, navAnimation]);
+  const handleSearch = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
   return (
     <Nav variants={navVariants} initial="top" animate={navAnimation}>
       <Col>
@@ -140,14 +148,14 @@ export default function Header() {
             <Link to="/">Home {homeMath && <Circle layoutId="circle" />}</Link>
           </Item>
           <Item>
-            <Link to="/tv">
+            <Link to="tv">
               Tv Shows {tvMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(handleSearch)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -185 : 0 }}
@@ -161,6 +169,7 @@ export default function Header() {
               clipRule="evenodd"></path>
           </motion.svg>
           <Input
+            {...register("keyword")}
             transition={{ type: "linear" }}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}

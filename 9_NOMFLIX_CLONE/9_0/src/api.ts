@@ -25,3 +25,8 @@ export function getMovies() {
     response => response.json()
   );
 }
+export function getSearch(keyword: string) {
+  return fetch(
+    `${BASE_PATH}/search/multi?api_key=${API_KEY}&query=${keyword}`
+  ).then(response => response.json());
+}

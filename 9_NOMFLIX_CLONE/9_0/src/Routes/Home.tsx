@@ -5,8 +5,6 @@ import { makeImagePath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
-import { isReadable } from "stream";
-import { url } from "inspector";
 
 const Wrapper = styled.div`
   background-color: black;
