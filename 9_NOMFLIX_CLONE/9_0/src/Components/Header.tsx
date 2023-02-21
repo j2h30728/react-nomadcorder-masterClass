@@ -101,7 +101,7 @@ export default function Header() {
   const navAnimation = useAnimation();
   const homeMath = useMatch("/");
   const tvMatch = useMatch("/tv");
-  console.log(inputAnimation, navAnimation);
+
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({ scaleX: 0 });
